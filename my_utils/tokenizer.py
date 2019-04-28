@@ -44,6 +44,7 @@ def normalize_text(text):
 def token_extend(reg_rules):
     return ' ' + reg_rules.group(0) + ' '
 
+
 def reform_text(text):
     text = re.sub(u'-|¢|¥|€|£|\u2010|\u2011|\u2012|\u2013|\u2014|\u2015|%|\[|\]|:|\(|\)|/', token_extend, text)
     text = text.strip(' \n')
@@ -115,8 +116,13 @@ class Vocabulary(object):
         for w in words: vocab.add(w)
         return vocab
 
+
 def build_vocab(data, glove_vocab=None, sort_all=False, thread=24, clean_on=False, cl_on=True):
-    if cl_on:
+    """
+    build_vocab(train_data + dev_data, wemb_vocab, sort_all=args.sort_all, clean_on=True, cl_on=False)
+    sort_all=store_true
+    """
+    if cl_on:  # False
         nlp = spacy.load('en', disable=['vectors', 'textcat', 'parser'])
     else:
         nlp = spacy.load('en', disable=['vectors', 'textcat', 'tagger', 'ner', 'parser'])
@@ -124,6 +130,10 @@ def build_vocab(data, glove_vocab=None, sort_all=False, thread=24, clean_on=Fals
     print('Collect vocab/pos counter/ner counter')
     # docs
     docs = [reform_text(sample['context']) for sample in data]
+    """
+    nlp.pipe():
+        Match a stream of documents, yielding them in turn.
+    """
     doc_tokened = [doc for doc in nlp.pipe(docs, batch_size=10000, n_threads=thread)]
     print('Done with doc tokenize')
     questions = [reform_text(sample['question']) for sample in data]
@@ -132,7 +142,7 @@ def build_vocab(data, glove_vocab=None, sort_all=False, thread=24, clean_on=Fals
 
     tag_counter = Counter()
     ner_counter = Counter()
-    if sort_all:
+    if sort_all:  # store_true
         counter = Counter()
         merged = doc_tokened + questions_tokened
         for tokened in tqdm.tqdm(merged, total=len(data)):

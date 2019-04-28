@@ -2,6 +2,7 @@ import random
 import torch
 import numpy
 
+
 class AverageMeter(object):
     """Computes and stores the average and current value."""
     # adapted from: https://github.com/facebookresearch/DrQA
@@ -19,6 +20,7 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
+
 
 def set_environment(seed, set_cuda=False):
     random.seed(seed)

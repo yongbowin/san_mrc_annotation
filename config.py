@@ -5,6 +5,8 @@ import torch
 Configuration file
 
 """
+
+
 def model_config(parser):
     parser.add_argument('--vocab_size', type=int, default=0)
     parser.add_argument('--covec_on', action='store_false')
@@ -37,7 +39,7 @@ def model_config(parser):
     parser.add_argument('--pwnn_on', action='store_false')
     parser.add_argument('--pwnn_hidden_size', type=int, default=256, help='support short con')
 
-    ##contextual encoding
+    # contextual encoding
     parser.add_argument('--contextual_hidden_size', type=int, default=128)
     parser.add_argument('--contextual_cell_type', type=str, default='lstm')
     parser.add_argument('--contextual_weight_norm_on', action='store_true')
@@ -46,7 +48,7 @@ def model_config(parser):
     parser.add_argument('--contextual_encoder_share', action='store_true')
     parser.add_argument('--contextual_num_layers', type=int, default=2)
 
-    ## mem setting
+    # mem setting
     parser.add_argument('--msum_hidden_size', type=int, default=128)
     parser.add_argument('--msum_cell_type', type=str, default='lstm')
     parser.add_argument('--msum_weight_norm_on', action='store_true')
@@ -103,7 +105,7 @@ def model_config(parser):
     parser.add_argument('--classifier_threshold', type=float, default=0.5)
     parser.add_argument('--label_size', type=int, default=1)
 
-    ### ELMo setting
+    # ELMo setting
     parser.add_argument('--elmo_on', action='store_true')
     parser.add_argument('--elmo_config_path', default='data/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json')
     parser.add_argument('--elmo_weight_path', default='data/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.hdf5')
@@ -115,6 +117,7 @@ def model_config(parser):
     parser.add_argument('--elmo_dropout', type=float, default=0.5)
 
     return parser
+
 
 def data_config(parser):
     parser.add_argument('--v2_on', action='store_true')
@@ -140,6 +143,7 @@ def data_config(parser):
     parser.add_argument('--threads', type=int, default=multiprocessing.cpu_count(),
                         help='number of threads for preprocessing.')
     return parser
+
 
 def train_config(parser):
     parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available(),
@@ -168,6 +172,7 @@ def train_config(parser):
     parser.add_argument('--seed', type=int, default=2018)
 
     return parser
+
 
 def set_args():
     parser = argparse.ArgumentParser()

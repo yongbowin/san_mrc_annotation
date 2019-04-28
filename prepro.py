@@ -30,6 +30,7 @@ DEBUG_SIZE = 2000
 
 NLP = spacy.load('en', disable=['vectors', 'textcat', 'parser'])
 
+
 def load_data(path, is_train=True, v2_on=False):
     rows = []
     with open(path, encoding="utf8") as f:
@@ -67,11 +68,12 @@ def load_data(path, is_train=True, v2_on=False):
                     return rows
     return rows
 
+
 def main():
     args = set_args()
     global logger
     start_time = time.time()
-    logger = create_logger(__name__, to_disk=True, log_file=args.log_file)
+    logger = create_logger(__name__, to_disk=True, log_file=args.log_file)  # ./san.log
     v2_on = args.v2_on
     version = 'v1'
     if v2_on:
@@ -87,17 +89,17 @@ def main():
     logger.warning(msg)
     if DEBUG_ON:
         logger.error('***DEBUGING MODE***')
-    train_path = os.path.join(args.data_dir, train_path)
-    valid_path = os.path.join(args.data_dir, dev_path)
+    train_path = os.path.join(args.data_dir, train_path)  # args.data_dir=data/, data/train-v2.0.json
+    valid_path = os.path.join(args.data_dir, dev_path)  # data/dev-v2.0.json
 
     logger.info('The path of training data: {}'.format(train_path))
     logger.info('The path of validation data: {}'.format(valid_path))
-    logger.info('{}-dim word vector path: {}'.format(args.embedding_dim, args.glove))
+    logger.info('{}-dim word vector path: {}'.format(args.embedding_dim, args.glove))  # embedding_dim=300
     # could be fasttext embedding
-    emb_path = args.glove
+    emb_path = args.glove  # data/glove.840B.300d.txt
     embedding_dim = args.embedding_dim
     set_environment(args.seed)
-    if args.fasttext_on:
+    if args.fasttext_on:  # store_true
         logger.info('Loading fasttext vocab.')
     else:
         logger.info('Loading glove vocab.')
@@ -105,8 +107,13 @@ def main():
     train_data = load_data(train_path, v2_on=v2_on)
     dev_data = load_data(valid_path, False, v2_on=v2_on)
 
+    """From GLoVe to acquire tokens, to set()"""
     wemb_vocab = load_emb_vocab(emb_path, embedding_dim, fast_vec_format=args.fasttext_on)
     logger.info('Build vocabulary')
+    """
+    '--sort_all', action='store_true',
+        sort the vocabulary by frequencies of all words, Otherwise consider question words first.
+    """
     vocab, _, _ = build_vocab(train_data + dev_data, wemb_vocab, sort_all=args.sort_all, clean_on=True, cl_on=False)
     logger.info('Done with vocabulary collection')
 
@@ -135,6 +142,7 @@ def main():
     build_data(dev_data, vocab, vocab_tag, vocab_ner, dev_fout, False, NLP=NLP, v2_on=v2_on)
     end_time = time.time()
     logger.warning('It totally took {} minutes to processe the data!!'.format((end_time - start_time) / 60.))
+
 
 if __name__ == '__main__':
     main()

@@ -22,20 +22,22 @@ from my_utils.squad_eval_v2 import my_evaluation as evaluate_v2
 
 args = set_args()
 # set model dir
-model_dir = args.model_dir
+model_dir = args.model_dir  # default='checkpoint'
 os.makedirs(model_dir, exist_ok=True)
-model_dir = os.path.abspath(model_dir)
+model_dir = os.path.abspath(model_dir)  # acquire absolute path
 
 # set environment
-set_environment(args.seed, args.cuda)
+set_environment(args.seed, args.cuda)  # seed default=2018
 # setup logger
-logger =  create_logger(__name__, to_disk=True, log_file=args.log_file)
+logger = create_logger(__name__, to_disk=True, log_file=args.log_file)
+
 
 def load_squad(data_path):
     with open(data_path) as dataset_file:
         dataset_json = json.load(dataset_file)
         dataset = dataset_json['data']
         return dataset
+
 
 def main():
     logger.info('Launching the SAN')
@@ -50,11 +52,15 @@ def main():
     test_path = gen_name(args.data_dir, args.test_data, version)
     test_gold_path = gen_gold_name(args.data_dir, args.test_gold, gold_version)
 
-    if args.v2_on:
+    if args.v2_on:  # store_true
         version = 'v2'
         gold_version = 'v2.0'
         dev_labels = load_squad_v2_label(args.dev_gold)
 
+    """
+    args.data_dir = data/
+    args.meta = meta
+    """
     embedding, opt = load_meta(opt, gen_name(args.data_dir, args.meta, version, suffix='pick'))
     train_data = BatchGen(gen_name(args.data_dir, args.train_data, version),
                           batch_size=args.batch_size,
@@ -114,7 +120,6 @@ def main():
             metric = evaluate(dev_gold, results)
             em, f1 = metric['exact_match'], metric['f1']
 
-
         output_path = os.path.join(model_dir, 'dev_output_{}.json'.format(epoch))
         with open(output_path, 'w') as f:
             json.dump(results, f)
@@ -160,6 +165,7 @@ def main():
             logger.warning("Epoch {0} - test EM: {1:.3f} F1: {2:.3f}".format(epoch, test_em, test_f1))
             if args.v2_on:
                 logger.warning("Epoch {0} - test ACC: {1:.4f}".format(epoch, test_acc))
+
 
 if __name__ == '__main__':
     main()

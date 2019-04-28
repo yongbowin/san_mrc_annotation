@@ -7,7 +7,11 @@ Author: xiaodl@microsoft.com
 import numpy as np
 from .tokenizer import normalize_text
 
+
 def load_emb_vocab(path, dim=300, fast_vec_format=False):
+    """
+    From GLoVe to acquire tokens.
+    """
     vocab = set()
     with open(path, encoding='utf-8') as f:
         line_count = 0
@@ -19,6 +23,7 @@ def load_emb_vocab(path, dim=300, fast_vec_format=False):
             token = normalize_text(' '.join(elems[0:-dim]))
             vocab.add(token)
     return vocab
+
 
 def build_embedding(path, vocab, dim=300, fast_vec_format=False):
     """Support fasttext format"""

@@ -17,9 +17,11 @@ def compute_acc(score_list, gold, threshold=0.5):
         if lab == gold[key]: correct += 1
     return correct * 100.0 / len(gold)
 
+
 def gen_name(dir, path, version, suffix='json'):
     fname = '{}_{}.{}'.format(path, version, suffix)
     return os.path.join(dir, fname)
+
 
 def gen_gold_name(dir, path, version, suffix='json'):
     fname = '{}-{}.{}'.format(path, version, suffix)
